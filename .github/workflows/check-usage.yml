@@ -1,0 +1,22 @@
+name: Check OpenAI Usage
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 毎日9時(JST)に実行（UTCで0時）
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y jq bc
+
+      - name: Run usage checker
+        run: bash scripts/check-usage.sh
+        env:
+          API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
